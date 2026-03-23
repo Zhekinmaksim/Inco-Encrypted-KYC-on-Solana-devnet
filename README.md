@@ -4,7 +4,7 @@ Privacy-preserving KYC (Know Your Customer) dApp built on **Solana** using **Inc
 
 ## Live Demo
 
-🔗 [Deployed on Vercel](#) *(add link after deploy)*
+🔗 **[Live Demo](https://inco-encrypted-kyc-on-solana-devnet.vercel.app)**
 
 📋 **Program ID:** `2TRoeeuqTXtfv4vP5weiHRB9vyRcGsWPmJT7tiYrvQoT`
 
