@@ -1,0 +1,8 @@
+node_modules/
+.next/
+target/
+.vercel
+*.pem
+.DS_Store
+.env*.local
+!frontend/.env.local

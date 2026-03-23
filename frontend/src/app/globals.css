@@ -1,0 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { --dark:#080a0f; --panel:#0f1117; --border:#1a1d2e; --accent:#00e5a0; --accent2:#6366f1; --text:#e2e8f0; --muted:#6b7280; }
+* { box-sizing: border-box; }
+body { background: var(--dark); color: var(--text); font-family: 'DM Sans', sans-serif; }
+body::before { content:''; position:fixed; inset:0; background: radial-gradient(ellipse at 15% 25%, rgba(0,229,160,0.05) 0%, transparent 50%), radial-gradient(ellipse at 85% 75%, rgba(99,102,241,0.05) 0%, transparent 50%); pointer-events:none; z-index:0; }
+.wallet-adapter-button { font-family:'DM Sans',sans-serif!important; }
+input:focus, select:focus, textarea:focus { outline:none; border-color:var(--accent)!important; box-shadow:0 0 0 3px rgba(0,229,160,0.1); }
+::-webkit-scrollbar { width:5px; } ::-webkit-scrollbar-track { background:var(--dark); } ::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }

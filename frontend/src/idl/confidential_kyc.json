@@ -1,0 +1,343 @@
+{
+  "address": "2TRoeeuqTXtfv4vP5weiHRB9vyRcGsWPmJT7tiYrvQoT",
+  "metadata": {
+    "name": "confidential_kyc",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Encrypted KYC program using Inco Lightning on Solana"
+  },
+  "instructions": [
+    {
+      "name": "grant_access",
+      "docs": [
+        "Grant a verifier decryption access to a specific field.",
+        "",
+        "Only the KYC owner can call this.",
+        "",
+        "remaining_accounts:",
+        "[0] allowance_account (mut) — PDA for the allow CPI",
+        "[1] verifier_address (readonly) — the verifier to grant access to"
+      ],
+      "discriminator": [
+        66,
+        88,
+        87,
+        113,
+        39,
+        22,
+        27,
+        165
+      ],
+      "accounts": [
+        {
+          "name": "kyc_account",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  107,
+                  121,
+                  99
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "authority"
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "inco_lightning_program",
+          "address": "5sjEbPiqgZrYwR31ahR6Uk9wf5awoX61YGg7jExQSwaj"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "field_index",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "initialize_kyc",
+      "docs": [
+        "Initialize a new KYC record PDA for the caller.",
+        "The PDA is derived from [\"kyc\", authority.key()]."
+      ],
+      "discriminator": [
+        151,
+        101,
+        28,
+        128,
+        192,
+        125,
+        236,
+        220
+      ],
+      "accounts": [
+        {
+          "name": "kyc_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  107,
+                  121,
+                  99
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "authority"
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "revoke_access",
+      "docs": [
+        "Revoke a verifier's decryption access to a specific field.",
+        "",
+        "remaining_accounts:",
+        "[0] allowance_account (mut)",
+        "[1] verifier_address (readonly)"
+      ],
+      "discriminator": [
+        106,
+        128,
+        38,
+        169,
+        103,
+        238,
+        102,
+        147
+      ],
+      "accounts": [
+        {
+          "name": "kyc_account",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  107,
+                  121,
+                  99
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "authority"
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "inco_lightning_program",
+          "address": "5sjEbPiqgZrYwR31ahR6Uk9wf5awoX61YGg7jExQSwaj"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "field_index",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "submit_field",
+      "docs": [
+        "Submit an encrypted KYC field.",
+        "",
+        "`ciphertext` — the client-side encrypted value from `encryptValue()`.",
+        "`field_index` — which field (0=name, 1=dob, 2=nationality, 3=doc_type, 4=doc_number, 5=address).",
+        "",
+        "The instruction:",
+        "1. Calls `new_euint128` on Inco Lightning to register the ciphertext and get an encrypted handle.",
+        "2. Stores the handle in the KYC account.",
+        "3. Calls `allow` to grant decryption access to the owner.",
+        "",
+        "remaining_accounts:",
+        "[0] allowance_account (mut) — PDA for the allow CPI",
+        "[1] owner_address (readonly) — the owner to grant access to"
+      ],
+      "discriminator": [
+        247,
+        10,
+        213,
+        219,
+        134,
+        98,
+        35,
+        124
+      ],
+      "accounts": [
+        {
+          "name": "kyc_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  107,
+                  121,
+                  99
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "authority"
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "inco_lightning_program",
+          "address": "5sjEbPiqgZrYwR31ahR6Uk9wf5awoX61YGg7jExQSwaj"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "ciphertext",
+          "type": "bytes"
+        },
+        {
+          "name": "field_index",
+          "type": "u8"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "KycAccount",
+      "discriminator": [
+        123,
+        111,
+        35,
+        238,
+        194,
+        3,
+        211,
+        78
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "InvalidFieldIndex",
+      "msg": "Field index must be 0-5"
+    },
+    {
+      "code": 6001,
+      "name": "Unauthorized",
+      "msg": "Only the KYC owner can perform this action"
+    },
+    {
+      "code": 6002,
+      "name": "FieldNotSubmitted",
+      "msg": "This field has not been submitted yet"
+    },
+    {
+      "code": 6003,
+      "name": "MissingAccounts",
+      "msg": "Missing required remaining accounts"
+    }
+  ],
+  "types": [
+    {
+      "name": "KycAccount",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "owner",
+            "docs": [
+              "Owner wallet pubkey"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "fields",
+            "docs": [
+              "6 encrypted field handles (u128 each):",
+              "0=name, 1=dob, 2=nationality, 3=doc_type, 4=doc_number, 5=address"
+            ],
+            "type": {
+              "array": [
+                "u128",
+                6
+              ]
+            }
+          },
+          {
+            "name": "field_count",
+            "docs": [
+              "Number of fields submitted"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "is_verified",
+            "docs": [
+              "Whether the KYC has been verified by an authorized party"
+            ],
+            "type": "bool"
+          },
+          {
+            "name": "submitted_at",
+            "docs": [
+              "Unix timestamp of submission"
+            ],
+            "type": "i64"
+          }
+        ]
+      }
+    }
+  ]
+}

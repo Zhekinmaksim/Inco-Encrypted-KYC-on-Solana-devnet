@@ -1,0 +1,13 @@
+{
+  "name": "inco-encrypted-kyc",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "programs:build": "cd programs/confidential-kyc && anchor build",
+    "programs:test": "cd programs/confidential-kyc && anchor test",
+    "programs:deploy": "cd programs/confidential-kyc && anchor deploy --provider.cluster devnet",
+    "programs:sync": "node scripts/sync-idl.js",
+    "dev": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build"
+  }
+}
