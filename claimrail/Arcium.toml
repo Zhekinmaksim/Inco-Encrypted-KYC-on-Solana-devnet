@@ -1,0 +1,10 @@
+[localnet]
+nodes = 2
+localnet_timeout_secs = 300
+backends = ["Cerberus"]
+
+[clusters.devnet]
+offset = 456
+
+[clusters.mainnet]
+offset = 2026

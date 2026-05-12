@@ -1,0 +1,11 @@
+[package]
+name = "encrypted-ixs"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "claimrail_encrypted_ixs"
+path = "src/lib.rs"
+
+[dependencies]
+arcis = { workspace = true }

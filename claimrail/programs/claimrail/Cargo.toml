@@ -1,0 +1,30 @@
+[package]
+name = "claimrail"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "claimrail"
+
+[features]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+cpi = ["no-entrypoint"]
+default = []
+idl-build = ["anchor-lang/idl-build", "arcium-anchor/idl-build"]
+anchor-debug = []
+custom-heap = []
+custom-panic = []
+
+[dependencies]
+anchor-lang = { workspace = true }
+arcium-anchor = { workspace = true }
+arcium-client = { workspace = true }
+arcium-macros = { workspace = true }
+# Pin to the last release compatible with Solana 2.3.0's bundled rustc 1.84.x.
+unicode-segmentation = "=1.12.0"
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(target_os, values("solana"))'] }

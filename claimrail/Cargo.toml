@@ -1,0 +1,19 @@
+[workspace]
+members = [
+  "programs/claimrail",
+  "encrypted-ixs",
+]
+resolver = "2"
+
+[workspace.package]
+edition = "2021"
+
+[workspace.dependencies]
+anchor-lang = { version = "0.32.1", features = ["init-if-needed"] }
+arcium-anchor = "0.9.7"
+arcium-client = { version = "0.9.7", default-features = false }
+arcium-macros = "0.9.7"
+arcis = "0.9.7"
+
+[profile.release]
+overflow-checks = true

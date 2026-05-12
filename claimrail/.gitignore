@@ -1,0 +1,10 @@
+/target
+/.anchor
+/build
+/artifacts
+/.DS_Store
+/app/node_modules
+/app/.next
+/app/.env.local
+/app/.env
+/app/tsconfig.tsbuildinfo
