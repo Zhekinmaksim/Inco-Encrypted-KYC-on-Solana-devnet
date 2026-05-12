@@ -1,4 +1,5 @@
 "use client";
+import { Fragment } from "react";
 
 export type ProgressStep = "connect" | "init" | "submit" | "policy" | "done";
 
@@ -15,14 +16,13 @@ function idx(s: ProgressStep) { return STEPS.findIndex(x => x.key === s); }
 export default function OnboardingProgress({ currentStep }: { currentStep: ProgressStep }) {
   const cur = idx(currentStep);
   return (
-    <div className="flex items-center overflow-x-auto py-1">
+    <div className="flex w-full items-center overflow-x-auto py-1">
       {STEPS.map((step, i) => {
         const done   = i < cur;
         const active = i === cur;
         return (
-          <div key={step.key} className="flex items-center">
-            <div className="flex items-center gap-2">
-              {/* Step box — matches the logo grid aesthetic */}
+          <Fragment key={step.key}>
+            <div className="flex flex-shrink-0 items-center gap-2">
               <div
                 style={{
                   width: 20, height: 20,
@@ -52,12 +52,15 @@ export default function OnboardingProgress({ currentStep }: { currentStep: Progr
             {i < STEPS.length - 1 && (
               <div
                 style={{
-                  width: 24, height: 1, margin: "0 10px", flexShrink: 0,
+                  flex: 1,
+                  minWidth: 24,
+                  height: 1,
+                  margin: "0 10px",
                   background: done ? "var(--ink)" : "var(--b2)",
                 }}
               />
             )}
-          </div>
+          </Fragment>
         );
       })}
     </div>

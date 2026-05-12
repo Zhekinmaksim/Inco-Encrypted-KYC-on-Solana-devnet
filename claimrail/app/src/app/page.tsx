@@ -103,7 +103,10 @@ export default function Home() {
   const hasPolicy = ownerVP.length > 0;
   const progress  = deriveStep({ connected, init: initDone, hasFields, hasPolicy });
 
-  const loadApplicantSnapshot = useCallback(async (applicantInput: string | PublicKey) => {
+  const loadApplicantSnapshot = useCallback(async (
+    applicantInput: string | PublicKey,
+    verifierInput?: string | PublicKey | null
+  ) => {
     const dossier = await loadKycRecord(applicantInput);
     if (!dossier) {
       return {
@@ -116,7 +119,7 @@ export default function Home() {
 
     const [eligibilityRecord, permissions] = await Promise.all([
       loadEligibility(applicantInput),
-      loadVerifierPermissions(applicantInput),
+      loadVerifierPermissions(applicantInput, verifierInput),
     ]);
 
     return {
@@ -239,14 +242,14 @@ export default function Home() {
   const handleVerifierLookup = useCallback(async () => {
     setVFLoad(true); setVFErr(null); setReveals({});
     try {
-      const snapshot = await loadApplicantSnapshot(vfAddr.trim());
+      const snapshot = await loadApplicantSnapshot(vfAddr.trim(), publicKey);
       if (!snapshot.dossier) { setVFD(null); setVFErr("No dossier found."); return; }
       setVFD(snapshot.dossier);
       setVFVS(snapshot.verificationStatus);
       setVFVP(snapshot.permissions);
     } catch (e: any) { setVFD(null); setVFErr(e?.message || "Failed."); }
     finally { setVFLoad(false); }
-  }, [loadApplicantSnapshot, vfAddr]);
+  }, [loadApplicantSnapshot, publicKey, vfAddr]);
 
   const handleReveal = useCallback(async (fieldIndex: number, handle: string) => {
     setReveals(c => ({ ...c, [fieldIndex]: { status: "loading" } }));
@@ -280,11 +283,12 @@ export default function Home() {
         />
 
         {/* Progress */}
-        {desk === "applicant" && (
-          <div className="mb-5 pb-5" style={{ borderBottom: "1px solid var(--b)" }}>
-            <OnboardingProgress currentStep={progress} />
-          </div>
-        )}
+        <div
+          className="mb-5 pb-5"
+          style={{ borderBottom: "1px solid var(--b)", minHeight: 42 }}
+        >
+          <OnboardingProgress currentStep={progress} />
+        </div>
 
         {/* Desk tabs */}
         <div className="flex" style={{ borderBottom: "1px solid var(--b2)" }}>

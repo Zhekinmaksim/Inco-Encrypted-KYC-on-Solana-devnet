@@ -81,6 +81,7 @@ type StoredSession = {
   submittedAt: number | null;
   fields: StoredField[];
   eligibility?: StoredEligibility;
+  permissions?: VerifierPermission[];
 };
 
 type AnchorWalletLike = {
@@ -155,6 +156,7 @@ function loadStoredSession(owner: string): StoredSession | null {
         plaintext: parsed.fields?.[index]?.plaintext || "",
       })),
       eligibility: parsed.eligibility,
+      permissions: Array.isArray(parsed.permissions) ? parsed.permissions : [],
     };
   } catch {
     return null;
@@ -164,6 +166,44 @@ function loadStoredSession(owner: string): StoredSession | null {
 function saveStoredSession(owner: string, session: StoredSession) {
   if (!hasStorage()) return;
   window.localStorage.setItem(getStorageKey(owner), JSON.stringify(session));
+}
+
+function mergePermission(
+  existing: VerifierPermission[] | undefined,
+  wallet: string,
+  fieldIndex: KYCFieldIndex,
+  action: "grant" | "revoke"
+): VerifierPermission[] {
+  const current = Array.isArray(existing) ? [...existing] : [];
+  const matchIndex = current.findIndex((entry) => entry.wallet === wallet);
+  const base =
+    matchIndex >= 0
+      ? current[matchIndex]
+      : { wallet, fieldIndexes: [], updatedAt: Date.now() };
+
+  const fieldSet = new Set(base.fieldIndexes);
+  if (action === "grant") {
+    fieldSet.add(fieldIndex);
+  } else {
+    fieldSet.delete(fieldIndex);
+  }
+
+  const nextEntry: VerifierPermission = {
+    wallet,
+    fieldIndexes: Array.from(fieldSet).sort((a, b) => a - b),
+    updatedAt: Date.now(),
+  };
+
+  if (nextEntry.fieldIndexes.length === 0) {
+    return current.filter((entry) => entry.wallet !== wallet);
+  }
+
+  if (matchIndex >= 0) {
+    current[matchIndex] = nextEntry;
+    return current;
+  }
+
+  return [...current, nextEntry];
 }
 
 function buildStoredFields(
@@ -344,25 +384,61 @@ export function useConfidentialKyc() {
   );
 
   const loadVerifierPermissions = useCallback(
-    async (ownerInput: string | PublicKey): Promise<VerifierPermission[]> => {
+    async (
+      ownerInput: string | PublicKey,
+      verifierInput?: string | PublicKey | null
+    ): Promise<VerifierPermission[]> => {
       const owner = typeof ownerInput === "string" ? new PublicKey(ownerInput) : ownerInput;
       const { program } = createProgram(connection, anchorWallet);
-      const entries = await program.account.revealPermissionAccount.all([
-        {
-          memcmp: {
-            offset: 8,
-            bytes: owner.toBase58(),
-          },
-        },
-      ]);
+      const dossier = await fetchApplicantDossier(program, owner);
+      if (!dossier) return [];
 
-      return entries.map((entry: any) => ({
-        wallet: entry.account.verifier.toBase58(),
+      const mapEntry = (wallet: string, account: any): VerifierPermission => ({
+        wallet,
         fieldIndexes: Array.from({ length: VISIBLE_FIELD_COUNT }, (_, index) => index).filter(
-          (index) => (Number(entry.account.allowedMask) & (1 << index)) !== 0
+          (index) => (Number(account.allowedMask) & (1 << index)) !== 0
         ),
-        updatedAt: safeNumber(entry.account.updatedAt) || Date.now(),
-      }));
+        updatedAt: safeNumber(account.updatedAt) || Date.now(),
+      });
+
+      const stored = loadStoredSession(owner.toBase58());
+
+      if (verifierInput) {
+        const verifier =
+          typeof verifierInput === "string" ? new PublicKey(verifierInput) : verifierInput;
+        const permissionAccount = derivePermissionPda(new PublicKey(dossier.kycPda), verifier);
+        const account = await program.account.revealPermissionAccount.fetchNullable(permissionAccount);
+        if (!account) {
+          return (stored?.permissions || []).filter((entry) => entry.wallet === verifier.toBase58());
+        }
+        return [mapEntry(verifier.toBase58(), account)];
+      }
+
+      try {
+        const entries = await program.account.revealPermissionAccount.all([
+          {
+            memcmp: {
+              offset: 8,
+              bytes: owner.toBase58(),
+            },
+          },
+        ]);
+
+        return entries.map((entry: any) =>
+          mapEntry(entry.account.verifier.toBase58(), entry.account)
+        );
+      } catch (err: any) {
+        const message = err?.message || String(err);
+        if (
+          message.includes("getProgramAccounts is not available") ||
+          message.includes("method not available") ||
+          message.includes("410") ||
+          message.includes("400")
+        ) {
+          return stored?.permissions || [];
+        }
+        throw err;
+      }
     },
     [anchorWallet, connection]
   );
@@ -676,7 +752,22 @@ export function useConfidentialKyc() {
           permissionAccount,
           systemProgram: SystemProgram.programId,
         })
-        .rpc({ commitment: "confirmed" });
+        .rpc({ commitment: "confirmed" })
+        .then((signature) => {
+          const stored = loadStoredSession(publicKey.toBase58());
+          if (stored) {
+            saveStoredSession(publicKey.toBase58(), {
+              ...stored,
+              permissions: mergePermission(
+                stored.permissions,
+                verifierPubkey.toBase58(),
+                fieldIndex,
+                action
+              ),
+            });
+          }
+          return signature;
+        });
     },
     [anchorWallet, connection, publicKey]
   );
