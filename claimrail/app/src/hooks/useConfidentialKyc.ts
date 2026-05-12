@@ -293,6 +293,28 @@ function normalizeDossierFromAccount(owner: PublicKey, publicKey: PublicKey, acc
   };
 }
 
+function normalizeDossierFromStoredSession(owner: PublicKey, session: StoredSession): KycDossier {
+  const fields = Array.from({ length: VISIBLE_FIELD_COUNT }, (_, index) => {
+    const storedField = session.fields?.[index];
+    const submitted = Boolean(storedField?.handle);
+    return {
+      index: index as KYCFieldIndex,
+      label: KYC_FIELDS[index],
+      handle: submitted ? storedField.handle : "",
+      submitted,
+    };
+  });
+
+  return {
+    owner: owner.toBase58(),
+    kycPda: session.kycPda,
+    policyPda: session.policyPda,
+    fieldCount: fields.filter((field) => field.submitted).length,
+    submittedAt: session.submittedAt,
+    fields,
+  };
+}
+
 function deriveEligibilityFromCache(account: any, stored: StoredEligibility): EligibilityOutput {
   let values = stored.decryptedOutcome;
 
@@ -319,22 +341,18 @@ function deriveEligibilityFromCache(account: any, stored: StoredEligibility): El
 }
 
 async function fetchApplicantDossier(program: anchor.Program, owner: PublicKey) {
-  const matches = await program.account.applicantDossier.all([
-    {
-      memcmp: {
-        offset: 8,
-        bytes: owner.toBase58(),
-      },
-    },
-  ]);
+  const directPda = deriveDossierPda(owner, DEFAULT_POLICY_ACCOUNT);
+  const directAccount = await program.account.applicantDossier.fetchNullable(directPda);
+  if (directAccount) {
+    return normalizeDossierFromAccount(owner, directPda, directAccount);
+  }
 
-  if (matches.length === 0) return null;
+  const stored = loadStoredSession(owner.toBase58());
+  if (stored) {
+    return normalizeDossierFromStoredSession(owner, stored);
+  }
 
-  const defaultMatch =
-    matches.find((entry: any) => entry.account.policy.toBase58() === DEFAULT_POLICY_ACCOUNT.toBase58()) ||
-    matches[0];
-
-  return normalizeDossierFromAccount(owner, defaultMatch.publicKey, defaultMatch.account);
+  return null;
 }
 
 export function useConfidentialKyc() {
@@ -402,11 +420,12 @@ export function useConfidentialKyc() {
       });
 
       const stored = loadStoredSession(owner.toBase58());
+      const dossierPubkey = new PublicKey(dossier.kycPda);
 
       if (verifierInput) {
         const verifier =
           typeof verifierInput === "string" ? new PublicKey(verifierInput) : verifierInput;
-        const permissionAccount = derivePermissionPda(new PublicKey(dossier.kycPda), verifier);
+        const permissionAccount = derivePermissionPda(dossierPubkey, verifier);
         const account = await program.account.revealPermissionAccount.fetchNullable(permissionAccount);
         if (!account) {
           return (stored?.permissions || []).filter((entry) => entry.wallet === verifier.toBase58());
@@ -414,31 +433,7 @@ export function useConfidentialKyc() {
         return [mapEntry(verifier.toBase58(), account)];
       }
 
-      try {
-        const entries = await program.account.revealPermissionAccount.all([
-          {
-            memcmp: {
-              offset: 8,
-              bytes: owner.toBase58(),
-            },
-          },
-        ]);
-
-        return entries.map((entry: any) =>
-          mapEntry(entry.account.verifier.toBase58(), entry.account)
-        );
-      } catch (err: any) {
-        const message = err?.message || String(err);
-        if (
-          message.includes("getProgramAccounts is not available") ||
-          message.includes("method not available") ||
-          message.includes("410") ||
-          message.includes("400")
-        ) {
-          return stored?.permissions || [];
-        }
-        throw err;
-      }
+      return stored?.permissions || [];
     },
     [anchorWallet, connection]
   );

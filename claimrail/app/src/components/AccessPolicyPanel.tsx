@@ -93,7 +93,7 @@ export default function AccessPolicyPanel({
           </div>
         </div>
         {/* 6-cell grid — same grid logic as the mark */}
-        <div className="grid grid-cols-3 sm:grid-cols-6" style={{ border: "1px solid var(--b2)" }}>
+        <div className="grid grid-cols-6" style={{ border: "1px solid var(--b2)" }}>
           {FIELDS.map((label, i) => {
             const submitted = dossier?.fields?.[i]?.submitted ?? false;
             const checked   = selectedFields[i];
@@ -105,8 +105,7 @@ export default function AccessPolicyPanel({
                 disabled={!submitted}
                 style={{
                   padding: "8px 6px",
-                  borderRight: i % 3 !== 2 ? "1px solid var(--b2)" : "none",
-                  borderBottom: i < 3 ? "1px solid var(--b2)" : "none",
+                  borderRight: i < FIELDS.length - 1 ? "1px solid var(--b2)" : "none",
                   background: checked ? "#2D5BFF" : "var(--bg-2)",
                   color: checked ? "#fff" : submitted ? "var(--ink)" : "var(--ink-3)",
                   fontFamily: "var(--font-mono)", fontSize: 10,

@@ -14,7 +14,7 @@ import type { EligibilityOutput, VerificationStatus, VerifierPermission } from "
 import { deriveVerificationStatus } from "@/lib/claimrailView";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { useWalletSession } from "@/contexts/WalletProvider";
-import { LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 
 const EMPTY = Array(6).fill(false);
 type Desk = "applicant" | "issuer" | "verifier";
