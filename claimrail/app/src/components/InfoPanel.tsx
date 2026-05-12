@@ -9,8 +9,8 @@ const features = [
   },
   {
     icon: Lock,
-    title: "Issuer policy scope",
-    desc: "RWA issuers can ask for specific claims and receive only policy-approved attestation inputs instead of the full dossier.",
+    title: "Lender policy scope",
+    desc: "Lenders can request only the claims they actually need and receive policy-approved attestations instead of the full borrower dossier.",
   },
   {
     icon: Shield,
@@ -33,10 +33,10 @@ export default function InfoPanel() {
           Product posture
         </div>
         <h3 className="mt-4 font-display text-2xl font-bold text-ink-800">
-          Claimrail should read like private RWA issuer onboarding infrastructure, not a generic identity demo.
+          Claimrail should read like a private lending eligibility product, not a generic identity demo.
         </h3>
         <p className="mt-3 max-w-xl text-sm leading-6 text-ink-500">
-          The product posture is now narrower and stronger: applicant intake, issuer policy, verifier reveal, and reusable attestation language for capital-markets onboarding on Solana.
+          The product posture is borrower intake, lender policy, private eligibility compute, and verifier reveal for lending workflows on Solana.
         </p>
       </div>
 
@@ -69,19 +69,19 @@ export default function InfoPanel() {
           <div>
             <p className="text-sm font-semibold">1. Privy session</p>
             <p className="mt-2 text-sm leading-6 text-white/70">
-              The applicant authenticates with email or wallet. An embedded Solana wallet can exist without exposing the issuer flow to wallet-first friction.
+              The borrower authenticates with email or wallet. An embedded Solana wallet can exist without forcing the whole flow into wallet-first friction.
             </p>
           </div>
           <div>
             <p className="text-sm font-semibold">2. Attestation inputs</p>
             <p className="mt-2 text-sm leading-6 text-white/70">
-              Each applicant claim is prepared for encrypted compute before the program ever sees a verdict.
+              Each borrower claim is prepared for encrypted compute before the program ever sees a verdict.
             </p>
           </div>
           <div>
             <p className="text-sm font-semibold">3. Policy reveal</p>
             <p className="mt-2 text-sm leading-6 text-white/70">
-              Arcium computes the eligibility result privately, then the program reveals only the fields an issuer policy explicitly requires.
+              Arcium computes the eligibility result privately, then the program reveals only the fields a lender policy explicitly requires.
             </p>
           </div>
         </div>

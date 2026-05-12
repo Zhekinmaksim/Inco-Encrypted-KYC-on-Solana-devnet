@@ -4,6 +4,8 @@ Claimrail is a private eligibility rail for **private lending and borrowing on S
 
 Borrowers submit an encrypted dossier. Lenders define policy. Arcium computes a minimal eligibility outcome. Verifiers reveal only policy-approved claims.
 
+Live app: [https://claimrail.vercel.app](https://claimrail.vercel.app)
+
 The current submission target is **Arcium RTG** only, specifically:
 
 - RTG: [Private Lending & Borrowing](https://rtg.arcium.com/rtg/dev-lending-borrowing)
@@ -212,6 +214,8 @@ The project is AI-assisted in implementation, but the product framing, policy mo
 ```
 
 The same submission copy is also stored in `SUBMISSION_COPY.md`.
+
+The complete handoff package for RTG submission and demo recording is stored in `RTG_SUBMISSION_PACK.md`.
 
 ## Notes
 

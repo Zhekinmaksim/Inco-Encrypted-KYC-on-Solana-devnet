@@ -15,10 +15,10 @@ export default function IssuerContextBar({ walletAddress, onLoadPersona, activeP
         <div>
           <span className="lbl">Issuer</span>
           <h2 className="mt-1 font-body text-[20px] font-600 leading-tight" style={{ letterSpacing: "-0.02em" }}>
-            Atlas Treasury Fund
+            Northline Credit Desk
           </h2>
           <p className="mt-1 text-[13px]" style={{ color: "var(--ink-2)" }}>
-            Tokenized US Treasuries · accredited investors only · EU + SG + CH + UK
+            private credit · borrower eligibility only · EU + SG + CH + UK
           </p>
         </div>
         <div className="text-right">
@@ -34,9 +34,9 @@ export default function IssuerContextBar({ walletAddress, onLoadPersona, activeP
       {/* Policy summary — three cell grid mirroring the mark */}
       <div className="grid grid-cols-3 mt-4" style={{ border: "1px solid var(--b2)" }}>
         {[
-          { l: "Min tier",        v: "Accredited", h: "Self-attested + verified" },
-          { l: "Allocation cap",  v: "$500,000",   h: "Tier A · max per applicant" },
-          { l: "Sanctions",       v: "OFAC + EU",  h: "Real-time screening" },
+          { l: "Min profile",    v: "Verified borrower", h: "jurisdiction + dossier checks" },
+          { l: "Borrowing cap",  v: "$75,000",          h: "tier B demo borrower limit" },
+          { l: "Sanctions",      v: "OFAC + EU",        h: "manual review if flagged" },
         ].map((item, i) => (
           <div key={item.l} className="px-3 py-2.5 bg-bg-2"
             style={{ borderRight: i < 2 ? "1px solid var(--b2)" : "none" }}>
@@ -52,7 +52,7 @@ export default function IssuerContextBar({ walletAddress, onLoadPersona, activeP
         <div className="flex items-center justify-between mb-2">
           <span className="lbl">Replay demo</span>
           <span className="font-mono text-[10px]" style={{ color: "var(--ink-3)" }}>
-            three personas — see policy outcomes without connecting a wallet
+            three personas - see policy outcomes without connecting a wallet
           </span>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">

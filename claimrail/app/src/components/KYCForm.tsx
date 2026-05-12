@@ -18,47 +18,47 @@ interface KYCFormProps {
   prefillPersona: PersonaKey | null;
 }
 
-// Six RWA-relevant fields. Index alignment with the on-chain program is preserved
+// Six lending-relevant fields. Index alignment with the on-chain program is preserved
 // (the program treats them as opaque encrypted handles), but the UI surface labels
 // them by what they mean for eligibility.
 const FIELDS = [
   {
     key: "jurisdiction",
     label: "Jurisdiction",
-    sub:   "ISO-2 country code · drives allowlist match",
+    sub:   "ISO-2 country code - drives allowlist match",
     type:  "select" as const,
     options: [
-      { v: "DE", l: "DE — Germany" },
-      { v: "FR", l: "FR — France" },
-      { v: "NL", l: "NL — Netherlands" },
-      { v: "SG", l: "SG — Singapore" },
-      { v: "CH", l: "CH — Switzerland" },
-      { v: "GB", l: "GB — United Kingdom" },
-      { v: "US", l: "US — United States" },
-      { v: "RU", l: "RU — Russia" },
+      { v: "DE", l: "DE - Germany" },
+      { v: "FR", l: "FR - France" },
+      { v: "NL", l: "NL - Netherlands" },
+      { v: "SG", l: "SG - Singapore" },
+      { v: "CH", l: "CH - Switzerland" },
+      { v: "GB", l: "GB - United Kingdom" },
+      { v: "US", l: "US - United States" },
+      { v: "RU", l: "RU - Russia" },
     ],
     index: 0,
   },
   {
     key: "accredited",
-    label: "Accredited investor",
-    sub:   "Self-attested + verified by issuer",
+    label: "Accreditation status",
+    sub:   "Self-attested + verified by lender",
     type:  "select" as const,
     options: [
-      { v: "true",  l: "Yes — accredited" },
-      { v: "false", l: "No — retail" },
+      { v: "true",  l: "Yes - accredited" },
+      { v: "false", l: "No - retail" },
     ],
     index: 1,
   },
   {
     key: "netWorthBand",
     label: "Net worth band",
-    sub:   "Drives tier · A/B/C cap assignment",
+    sub:   "Drives tier and borrowing cap assignment",
     type:  "select" as const,
     options: [
       { v: "<100k",    l: "Under $100k" },
-      { v: "100k-1M",  l: "$100k – $1M" },
-      { v: "1M-10M",   l: "$1M – $10M" },
+      { v: "100k-1M",  l: "$100k - $1M" },
+      { v: "1M-10M",   l: "$1M - $10M" },
       { v: "10M+",     l: "$10M+" },
     ],
     index: 2,
@@ -66,7 +66,7 @@ const FIELDS = [
   {
     key: "pepStatus",
     label: "PEP status",
-    sub:   "Politically exposed person — requires manual review if flagged",
+    sub:   "Politically exposed person - requires manual review if flagged",
     type:  "select" as const,
     options: [
       { v: "none",          l: "None" },
@@ -90,7 +90,7 @@ const FIELDS = [
   {
     key: "investmentCap",
     label: "Investment intent",
-    sub:   "USDC · capped by tier policy",
+    sub:   "USDC - capped by tier policy",
     type:  "number" as const,
     placeholder: "75000",
     index: 5,

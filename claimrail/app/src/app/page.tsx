@@ -272,7 +272,7 @@ export default function Home() {
 
       <main className="mx-auto max-w-5xl px-4 pb-20 pt-8 sm:px-6">
 
-        {/* Issuer context — Atlas Treasury Fund */}
+        {/* Issuer context */}
         <IssuerContextBar
           walletAddress={walletAddress}
           onLoadPersona={handleLoadPersona}

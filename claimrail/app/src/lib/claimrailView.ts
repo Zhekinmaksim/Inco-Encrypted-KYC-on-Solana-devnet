@@ -13,11 +13,11 @@ export const DEFAULT_POLICY_ISSUER = new PublicKey(
 
 export const KYC_FIELDS = [
   "Jurisdiction",
-  "Accredited Investor",
+  "Accreditation Status",
   "Net Worth Band",
   "PEP Status",
   "Sanctions Status",
-  "Requested Allocation",
+  "Requested Borrowing Amount",
 ] as const;
 
 export const REVEAL_FIELD_KEYS = [
@@ -176,8 +176,8 @@ export function deriveEligibilityOutput(
     : values.eligible
       ? null
       : values.requiredRevealMask === 0
-        ? "Policy rejected this applicant."
-        : "Issuer policy rejected the applicant.";
+        ? "Policy rejected this borrower."
+        : "Lender policy rejected the borrower.";
 
   return {
     availableOnChain: true,
@@ -202,7 +202,7 @@ export function deriveVerificationStatus(
     return {
       applicant,
       status: "not_submitted",
-      issuerName: "Atlas Treasury Fund",
+      issuerName: "Northline Credit Desk",
       providerLabel: "Arcium confidential eligibility",
       issuerWallet: DEFAULT_POLICY_ISSUER.toBase58(),
       note: "",
@@ -216,7 +216,7 @@ export function deriveVerificationStatus(
     return {
       applicant,
       status: dossier.fieldCount > 0 ? "pending_review" : "not_submitted",
-      issuerName: "Atlas Treasury Fund",
+      issuerName: "Northline Credit Desk",
       providerLabel: "Arcium confidential eligibility",
       issuerWallet: DEFAULT_POLICY_ISSUER.toBase58(),
       note:
@@ -233,7 +233,7 @@ export function deriveVerificationStatus(
     return {
       applicant,
       status: "pending_review",
-      issuerName: "Atlas Treasury Fund",
+      issuerName: "Northline Credit Desk",
       providerLabel: "Encrypted Arcium verdict on-chain",
       issuerWallet: DEFAULT_POLICY_ISSUER.toBase58(),
       note: "Eligibility result is finalized on-chain but can only be decrypted in the compute session.",
@@ -258,7 +258,7 @@ export function deriveVerificationStatus(
   return {
     applicant,
     status,
-    issuerName: "Atlas Treasury Fund",
+    issuerName: "Northline Credit Desk",
     providerLabel: eligibility.decryptable
       ? "Arcium confidential eligibility"
       : "Encrypted Arcium verdict on-chain",
@@ -267,7 +267,7 @@ export function deriveVerificationStatus(
       ? "PEP or sanctions-sensitive profile routed to manual review."
       : eligibility.eligible
         ? `Eligible for tier ${eligibility.riskTier} up to $${eligibility.maxAllocation.toLocaleString("en-US")}.`
-        : eligibility.rejectionReason || "Policy rejected the applicant.",
+        : eligibility.rejectionReason || "Policy rejected the borrower.",
     attestationId,
     createdAt: dossier.submittedAt,
     reviewedAt: eligibility.computedAt,

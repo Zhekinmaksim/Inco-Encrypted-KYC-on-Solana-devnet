@@ -8,7 +8,7 @@ const WalletProviders = dynamic(
 );
 
 export const metadata: Metadata = {
-  title: "Claimrail · Private Compliance Identity for Solana",
+  title: "Claimrail · Private Eligibility Rail for Solana Lending",
   description: "Claimrail is a private eligibility rail for private lending and borrowing on Solana, powered by Arcium and Privy.",
 };
 
